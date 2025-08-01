@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { mockJobs } from "@/lib/mock-data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { 
   Search, 
   Filter, 
@@ -24,9 +25,18 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 
 export default function SeekerJobsPage() {
+  const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [jobs] = useState(mockJobs);
   const [savedJobs, setSavedJobs] = useState(new Set());
+
+  // Initialize search term from URL parameters
+  useEffect(() => {
+    const urlSearch = searchParams.get('search');
+    if (urlSearch) {
+      setSearchTerm(decodeURIComponent(urlSearch));
+    }
+  }, [searchParams]);
 
   const filteredJobs = jobs.filter(job =>
     job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
